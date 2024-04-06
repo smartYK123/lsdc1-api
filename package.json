@@ -9,9 +9,6 @@
   },
   "author": "Pst olayinka",
   "license": "ISC",
-  "engines": {
-    "node": "20.x"
-  },
   "dependencies": {
     "body-parser": "^1.20.2",
     "cloudinary": "^2.0.0",
