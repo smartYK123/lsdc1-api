@@ -40,20 +40,53 @@ app.use(
   })
 );
 const jwt = require("jsonwebtoken");
-mongoose
-  .connect(
-    process.env.MONGO_URI,
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
-  .then(() => {
-    console.log("Connect to Mongodb");
-  })
-  .catch((err) => {
-    console.log("Error connecting to Mongodb", err);
+// mongoose
+//   .connect(
+//     process.env.DATABASE_URL,
+//     {
+//       useNewUrlParser: true,
+//       useUnifiedTopology: true,
+//     }
+//   )
+//   .then(() => {
+//     console.log("Connect to Mongodb");
+//   })
+//   .catch((err) => {
+//     console.log("Error connecting to Mongodb", err);
+//   });
+
+async function connectToDatabase() {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("No value in DATABASE_URL in env var");
+  }
+
+  // To override the database name, set the DATABASE_NAME environment variable in the .env file
+  const DATABASE_NAME = process.env.DATABASE_NAME || "turnermarvelous";
+
+  // Connect to the MongoDB database
+  await mongoose.connect(process.env.DATABASE_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   });
+
+  console.log("Connected to MongoDB");
+
+  return {
+    DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_NAME: DATABASE_NAME
+  };
+}
+
+
+connectToDatabase()
+  .then(connectionInfo => {
+    console.log("Connection info:", connectionInfo);
+  })
+  .catch(err => {
+    console.error("Error connecting to MongoDB:", err);
+    process.exit(1);
+  });
+
 // Generate a consistent secret key
 // const secretKey = crypto.randomBytes(32).toString("hex");
 const Informals = require("./models/informals");
